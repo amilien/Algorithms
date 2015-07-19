@@ -13,6 +13,18 @@ public class MyList {
 		Node(int t) {
 			value = t;
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj instanceof Node) {
+				Node node = (Node) obj;
+				if (node.value == value)
+					return true;
+			}
+			return false;
+		}
 	}
 
 	void create() {
@@ -96,6 +108,23 @@ public class MyList {
 				break;
 			}
 			cur = cur.next;
+		}
+	}
+	
+	void delete(Node node) {
+		if (node == null || root == null)
+			return;
+		Node current = root;
+		if (current.equals(node)) {
+			root = current.next;
+			return;
+		}
+		while (current.next != null) {
+			if (current.next.equals(node)) {
+				current.next = current.next.next;
+				return;
+			}
+			current = current.next;
 		}
 	}
 	
@@ -241,7 +270,7 @@ public class MyList {
 	}
 	
 	public static void main(String[] args) {
-		MyList l1 = new MyList();
+		/*MyList l1 = new MyList();
 		MyList l2 = new MyList();
 		Stack<Integer> s = new Stack<Integer>();
 		s.add(9);s.add(2);s.add(7);s.add(4);s.add(0);s.add(8);s.add(6);s.add(3);s.add(5);s.add(1);
@@ -261,7 +290,12 @@ public class MyList {
 			System.out.print(node.value + " -> ");
 			node = node.next;
 		}
-		System.out.println("null");
+		System.out.println("null");*/
+		MyList l = new MyList();
+		l.create();
+		l.print();
+		l.delete(l.new Node(5));
+		l.print();
 	}
 
 }

@@ -17,11 +17,11 @@ public class Sort {
     static int partition(int[] arr, int l, int r) {
     	//System.out.println("partition: l=" + l + ", r=" + r);
         int left = l, right = r;
-        int pivot = arr[(right + left) / 2];
+        int pivot = (right + left) / 2;
         while (left <= right) {
-            while (arr[left] < pivot)
+            while (arr[left] < arr[pivot])
                 left++;
-            while (arr[right] > pivot)
+            while (arr[right] > arr[pivot])
                 right--;
             if (left <= right) {
                 int tmp = arr[left];
@@ -71,7 +71,7 @@ public class Sort {
     }
     
     public static void main(String[] args) {
-        //quickSort(array, 0, array.length - 1);
+        quickSort(array, 0, array.length - 1);
         print(array);
     	//System.out.println(binarySearchR(sortedArray, 10));
     }

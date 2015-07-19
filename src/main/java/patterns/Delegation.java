@@ -1,5 +1,10 @@
 package patterns;
 
+/**
+ * An object, instead of performing one of its stated tasks, delegates that task to an associated helper object.
+ * @author Mike
+ */
+
 public class Delegation {
 
 	class A {

@@ -100,6 +100,7 @@ public class MergeSort {
 	}
 	
 	public static void main(String[] args) {
+		//int[] unsorted = new int[] {5, 3, 6, 1, 4, 8, 9, 2};
 		int[] unsorted = {4, 5, 2, 9, 8, 0, 3, 7, 1, 6};
 		int[] a = {1, 5, 7};
 		int[] b = {0, 2, 3, 4, 6, 8, 9};

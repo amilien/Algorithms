@@ -1,56 +1,83 @@
 package patterns;
 
+/**
+ * ¬±¬â¬Ö¬Õ¬ß¬Ñ¬Ù¬ß¬Ñ¬é¬Ö¬ß ¬Õ¬Ý¬ñ ¬Õ¬Ú¬ß¬Ñ¬Þ¬Ú¬é¬Ö¬ã¬Ü¬à¬Ô¬à ¬á¬à¬Õ¬Ü¬Ý¬ð¬é¬Ö¬ß¬Ú¬ñ ¬Õ¬à¬á¬à¬Ý¬ß¬Ú¬ä¬Ö¬Ý¬î¬ß¬à¬Ô¬à ¬á¬à¬Ó¬Ö¬Õ¬Ö¬ß¬Ú¬ñ ¬Ü ¬à¬Ò¬ì¬Ö¬Ü¬ä¬å. 
+ * ¬±¬â¬Ö¬Õ¬à¬ã¬ä¬Ñ¬Ó¬Ý¬ñ¬Ö¬ä ¬Ô¬Ú¬Ò¬Ü¬å¬ð ¬Ñ¬Ý¬î¬ä¬Ö¬â¬ß¬Ñ¬ä¬Ú¬Ó¬å ¬á¬â¬Ñ¬Ü¬ä¬Ú¬Ü¬Ö ¬ã¬à¬Ù¬Õ¬Ñ¬ß¬Ú¬ñ ¬á¬à¬Õ¬Ü¬Ý¬Ñ¬ã¬ã¬à¬Ó ¬ã ¬è¬Ö¬Ý¬î¬ð ¬â¬Ñ¬ã¬ê¬Ú¬â¬Ö¬ß¬Ú¬ñ ¬æ¬å¬ß¬Ü¬è¬Ú¬à¬ß¬Ñ¬Ý¬î¬ß¬à¬ã¬ä¬Ú.
+ * @author Mike
+ */
+
 public class Decorator {
 
-	interface Shape {
-		void draw();
+	public interface InterfaceComponent {
+		void doOperation();
 	}
-	
-	class Circle implements Shape {
+	 
+	class MainComponent implements InterfaceComponent {
+	 
 		@Override
-		public void draw() {
-			System.out.println("Circle.draw()");
-		}
-	}
-	
-	public abstract class ShapeDecorator implements Shape {
-		protected Shape decoratedShape;
-
-		public ShapeDecorator(Shape decoratedShape) {
-			this.decoratedShape = decoratedShape;
-		}
-
-		public void draw() {
-			decoratedShape.draw();
+		public void doOperation() {
+			System.out.print("World!");
 		}	
 	}
-	
-	public class RedShapeDecorator extends ShapeDecorator {
-
-		public RedShapeDecorator(Shape decoratedShape) {
-			super(decoratedShape);		
+	 
+	abstract class AbstractDecorator implements InterfaceComponent {
+		protected InterfaceComponent component;
+	 
+		public AbstractDecorator(InterfaceComponent c) {
+			component = c;
 		}
-
+	 
 		@Override
-		public void draw() {
-			decoratedShape.draw();	       
-		    setRedBorder(decoratedShape);
+		public void doOperation() {
+			component.doOperation();
 		}
-
-		private void setRedBorder(Shape decoratedShape){
-			System.out.println("Border Color: Red");
-		}
+	 
+        public void newOperation() {
+        	System.out.println(" [Do Nothing]");
+        }
 	}
-	
-	
-	public static void main(String[] args) {
+	 
+	class DecoratorSpace extends AbstractDecorator {
+	 
+		public DecoratorSpace(InterfaceComponent c) {
+			super(c);
+		}
+	 
+		@Override
+		public void doOperation() {
+			System.out.print(" ");
+			super.doOperation();
+		}
+	 
+        @Override
+        public void newOperation() {
+            System.out.println(" [New space operation]");
+        }	
+	}
+	 
+	class DecoratorHello extends AbstractDecorator {
+	 
+		public DecoratorHello(InterfaceComponent c) {
+			super(c);
+		}
+	 
+		@Override
+		public void doOperation() {
+			System.out.print("Hello");
+			super.doOperation();
+		}	
+	 
+        @Override
+        public void newOperation() {
+            System.out.println(" [New hello operation]");
+        }
+	}
+	 
+	public static void main (String... s) {
 		Decorator instance = new Decorator();
-		Shape circle = instance.new Circle();
-		Shape redCircle = instance.new RedShapeDecorator(circle);
-		System.out.println("Circle with normal border");
-		circle.draw();
-		System.out.println("Circle with red border");
-		redCircle.draw();
-	}
+		AbstractDecorator c = instance.new DecoratorHello(instance.new DecoratorSpace(instance.new MainComponent()));
+		c.doOperation();
+        //c.newOperation();
+    }
 
 }

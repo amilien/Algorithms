@@ -174,9 +174,8 @@ public class BinaryTree {
     		return null;
     	if (root.equals(a) || root.equals(b))
     		return root; // if at least one matched, no need to continue, this is the LCA for this root
-    	Node left = null, right = null;
-    	left = LCA(root.left, a, b);
-    	right = LCA(root.right, a, b);
+    	Node left = LCA(root.left, a, b);
+    	Node right = LCA(root.right, a, b);
     	if (left != null && right != null)
     		return root; // nodes are each on a separate branch
     	return (left != null) ? left : right; // either one node is on one branch or none was found in any of the branches
@@ -204,7 +203,7 @@ public class BinaryTree {
         }
         //lvr(root);
         //bfs(root);
-        System.out.println(LCA(root, new Node(12), new Node(13)).value);
+        System.out.println(LCA(root, new Node(12), new Node(9)).value);
     }
 
 }

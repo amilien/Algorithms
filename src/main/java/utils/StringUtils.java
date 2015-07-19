@@ -106,6 +106,7 @@ public class StringUtils {
 		return true;
 	}
 	
+	// space - O(1)
 	static boolean areUniqueChars2(String s) {
 		int checker = 0;
 		for (int i = 0; i < s.length(); i++) {
@@ -124,8 +125,7 @@ public class StringUtils {
 		hit[s[0]] = true;
 		for (int i = 1; i < s.length; i++) {
 			if (!hit[s[i]]) {
-				s[tail] = s[i];
-				tail++;
+				s[tail++] = s[i];
 				hit[s[i]] = true;
 			}
 		}
@@ -169,18 +169,18 @@ public class StringUtils {
 		Map<String, Integer> wordsMap = readFile(file);
 		// build result map with the most frequent words
 		Map<String, Integer> resultMap = new HashMap<String, Integer>();
-		int mapResultValue = 0;
+		int mapResultFrequency = 0;
 		for (Map.Entry<String, Integer> entry: wordsMap.entrySet()) {
-			String key = entry.getKey();
-			int value = entry.getValue();
+			String word = entry.getKey();
+			int frequency = entry.getValue();
 			if (resultMap.isEmpty()) {
-				resultMap.put(key, value);
-				mapResultValue = value;
-			} else if (value >= mapResultValue) {
-				if (value > mapResultValue)
+				resultMap.put(word, frequency);
+				mapResultFrequency = frequency;
+			} else if (frequency >= mapResultFrequency) {
+				if (frequency > mapResultFrequency)
 					resultMap.clear();
-				resultMap.put(key, value);
-				mapResultValue = value;
+				resultMap.put(word, frequency);
+				mapResultFrequency = frequency;
 			}
 		}
 		// build a words list from the result map 
@@ -212,11 +212,15 @@ public class StringUtils {
 		return map;
 	}
 	
-	// given an input string and a dictionary of words, segment the input string into a space-separated sequence of dictionary words
+	// given an input string and a dictionary of words, segment the input 
+	// string into a space-separated sequence of dictionary words
 	// O(n^2)
-	static Map<String, String> memoized = new HashMap<String, String>();
-
 	static String segmentString(String input, Set<String> dict) {
+		Map<String, String> memoized = new HashMap<String, String>();
+		return segmentString(input, dict, memoized);
+	}
+	
+	private static String segmentString(String input, Set<String> dict, Map<String, String> memoized) {
 		if (dict.contains(input))
 			return input;
 		if (memoized.containsKey(input))
@@ -393,10 +397,24 @@ public class StringUtils {
 		//for (String a: res) {
 		//	System.out.println(a);
 		//}
-		groupAnagrams(new String[] {"qwe", "abc", "cab", "def", "acb", "fed", "012", "weq"});
+		//groupAnagrams(new String[] {"qwe", "abc", "cab", "def", "acb", "fed", "012", "weq"});
 		//Set<String> set = new HashSet<String>();
-		//set.add("hi");set.add("hello");set.add("i");set.add("am");set.add("mike");set.add("hit");set.add("the");
+		//set.add("hi");set.add("hello");set.add("i");set.add("am");set.add("mike");set.add("hit");set.add("the");set.add("ia");
 		//System.out.println(segmentString("hithelloiammike", set));
+		
+		/*Map<String, Object> map = new HashMap<String, Object>();
+		map.put("1", "1");
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2.put("21", "21");map2.put("22", "22");
+		Map<String, Object> map3 = new HashMap<String, Object>();
+		map3.put("31", "31");map3.put("32", "32");
+		map2.put("23", map3);
+		map.put("2", map2);
+		map.put("3", "3");
+		System.out.print(mapToJSON(map));*/
+		
+		//System.out.println(removeDupChars(new char[] {'a', 'a', 'b', 'c', 'a', 'b', 'a'}));
+		System.out.println(isPalindrome("KAYAK"));
 	}
 
 }

@@ -1,80 +1,100 @@
 package threads;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class ProducerConsumer2 {
-	
+
 	public static void main(String[] args) {
-		Buffer buffer = new Buffer();
-		Producer2 producer = new Producer2(buffer, 1);
-	    Consumer2 consumer = new Consumer2(buffer, 1);
-	    producer.start(); 
-	    consumer.start();
+		DataQueue2 queue = new DataQueue2();
+		Producer2 p = new Producer2(queue);
+		Consumer2 c = new Consumer2(queue);
+		p.start();
+		c.start();
 	}
 }
 
-class Buffer {
-	private int contents;
-	private boolean available = false;
+class DataQueue2 {
 	
-	public synchronized int get() {
-		while (available == false) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-		    }
-		}
-		available = false;
-		notifyAll();
-		return contents;
+	private static final int CAPACITY = 5;
+	private Queue<Integer> queue = new LinkedList<>();
+	private Lock lock = new ReentrantLock();
+	private Condition cond = lock.newCondition();
+	
+	public boolean isEmpty() {
+		return queue.isEmpty();
 	}
 	
-	public synchronized void put(int value) {
-		while (available == true) {
-			try {
-				wait();
-			} catch (InterruptedException e) { 
-			} 
-		}
-		contents = value;
-		available = true;
-		notifyAll();
+	public boolean isFull() {
+		return queue.size() == CAPACITY;
 	}
-}
-
-class Consumer2 extends Thread {
-	private Buffer buffer;
-	private int number;
-		   
-	public Consumer2(Buffer buffer, int number) {
-		this.buffer = buffer;
-		this.number = number;
-	}
-		   
-	public void run() {
-		int value = 0;
-		for (int i = 0; i < 10; i++) {
-			value = buffer.get();
-		    System.out.println("Consumer #" + this.number + " got: " + value);
+	
+	public Integer dequeue() throws InterruptedException {
+		int value;
+		lock.lock();
+		if (isEmpty()) {
+			cond.await();
 		}
+		value = queue.poll();
+		System.out.println("Dequeue: " + value);
+		cond.signal();
+		lock.unlock();
+		return value;
+	}
+	
+	public void enqueue(int value) throws InterruptedException {
+		lock.lock();
+		if (isFull()) {
+			cond.await();
+		}
+		System.out.println("Enqueue: " + value);
+		queue.add(value);
+		cond.signal();
+		lock.unlock();
+		Thread.sleep(50);
 	}
 }
 
 class Producer2 extends Thread {
-	private Buffer buffer;
-	private int number;
 
-	public Producer2(Buffer buffer, int number) {
-		this.buffer = buffer;
-		this.number = number;
+	private static final int LIMIT = 100;
+	private DataQueue2 queue;
+	
+	public Producer2(DataQueue2 queue) {
+		this.queue = queue;
 	}
-
+	
+	@Override
 	public void run() {
-		for (int i = 0; i < 10; i++) {
-			buffer.put(i);
-			System.out.println("Producer #" + this.number + " put: " + i);
-			try {
-				sleep((int)(Math.random() * 100));
-			} catch (InterruptedException e) {
+		try {
+			for (int i = 0; i < LIMIT; i++) {
+				queue.enqueue(i);
 			}
+		} catch (InterruptedException e) {
 		}
 	}
 }
+
+class Consumer2 extends Thread {
+	
+	private static final int LIMIT = 100;
+	private DataQueue2 queue;
+	
+	public Consumer2(DataQueue2 queue) {
+		this.queue = queue;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			for (int i = 0; i < LIMIT; i++) {
+				queue.dequeue();
+			}
+		} catch (InterruptedException e) {
+		}
+	}
+}
+

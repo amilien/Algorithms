@@ -14,24 +14,26 @@ import java.math.BigInteger;
  * 5. fact2(int n): efficiently calculates factorial
  * 6. pow(long a, long n): efficiently calculates power
  * 7. get1Bits(int value): finds the number of '1' bits
- * 8. rotateMatrix(int[][] arr): rotates matrix 90 degrees clockwise
- * 9. buildSumMatrix(int[][] arr): builds matrix where (i, j) = sum(i x j)
- * 10. printMatrixDiagonals(int[][] a): prints matrix diagonals with bottom left-top right direction
- * 11. findNumberInMatrix(int x, int[][] a): searches for a number in the matrix with sorted rows and columns
- * 12. getPascalTriangleElement(int row, int col): calculates the element in Pascal triangle by given row and column
+ * 8. setRowAndColumnZero(int[][] arr): sets row and column to 0 if element is 0 
+ * 9. rotateMatrix(int[][] arr): rotates matrix 90 degrees clockwise
+ * 10. rotateMatrixInPlace(int[][] arr): rotates matrix 90 degrees clockwise in-place
+ * 11. buildSumMatrix(int[][] arr): builds matrix where (i, j) = sum(i x j)
+ * 12. printMatrixDiagonals(int[][] a): prints matrix diagonals with bottom left-top right direction
+ * 13. findNumberInMatrix(int x, int[][] a): searches for a number in the matrix with sorted rows and columns
+ *
  */
 
-public class ArithmeticUtils {
+public class Arithmetic {
 
 	// O(log y)
     static int multiply(int x, int y) {
         if (y == 0)
             return 0;
-        int z = multiply(x, y/2);
+        int z = multiply(x, y / 2);
         if (y % 2 == 0)
             return 2 * z;
         else
-            return x + 2*z;
+            return x + 2 * z;
     }
 
     // Input:  2 n-digit numbers
@@ -52,17 +54,6 @@ public class ArithmeticUtils {
         BigInteger bd    = karatsuba(b, d);
         BigInteger abcd  = karatsuba(a.add(b), c.add(d));
         return ac.add(abcd.subtract(ac).subtract(bd).shiftLeft(N)).add(bd.shiftLeft(2*N));
-    }
-    
-    // O(dividend) BAD
-    static int div(int dividend, int divisor) {
-        int res = 0;
-        int remainder = dividend;
-        while (remainder >= divisor) {
-            remainder -= divisor;
-            res++;
-        }
-        return res;
     }
     
     // O(2*log(y)x)
@@ -201,6 +192,23 @@ public class ArithmeticUtils {
     	return res;
     }
     
+    // O(m*n) - time, O(m+n) - space
+    static int[][] setRowAndColumnZero(int[][] arr) {
+    	int m = arr[0].length; // width
+    	int n = arr.length; // height
+    	boolean[] rowHasZero = new boolean[n];
+    	boolean[] colHasZero = new boolean[m];
+    	for (int i = 0; i < n; i++)
+    		for (int j = 0; j < m; j++)
+    			if (arr[i][j] == 0)
+    				rowHasZero[i] = colHasZero[j] = true;
+    	for (int i = 0; i < n; i++)
+    		for (int j = 0; j < m; j++)
+    			if (rowHasZero[i] || colHasZero[j])
+					arr[i][j] = 0;
+    	return arr;
+    }
+    
     // rotate matrix 90 clockwise
     static int[][] rotateMatrix(int[][] arr) {
     	int[][] tmp = new int[arr[0].length][arr.length];
@@ -210,6 +218,28 @@ public class ArithmeticUtils {
     		}
     	}
     	return tmp;
+    }
+    
+    // rotate matrix 90 clockwise in-place
+    static int[][] rotateMatrixInPlace(int[][] arr) {
+    	int n = arr.length;
+    	for (int layer = 0; layer < n / 2; layer++) {
+    		int first = layer;
+    		int last = n - 1 - layer;
+    		for (int i = first; i < last; i++) {
+    			int offset = i - first;
+    			int top = arr[first][i]; // save top
+    			// left -> top
+    			arr[first][i] = arr[last - offset][first];
+    			// bottom -> left
+    			arr[last - offset][first] = arr[last][last - offset];
+    			// right -> bottom
+    			arr[last][last - offset] = arr[i][last];
+    			// top -> right
+    			arr[i][last] = top; 
+    		}
+    	}
+    	return arr;
     }
     
     // build matrix where (i, j) = sum(i x j)
@@ -278,14 +308,17 @@ public class ArithmeticUtils {
     	//BigInteger a = new BigInteger("100000");BigInteger b = new BigInteger("200000");
         //System.out.println(karatsuba(a, b));
         //System.out.println(get1Bits(5559));
-    	//int[][] arr = new int[][] {{0, 1, 2, 3}, {2, 3, 4, 5}, {0, 1, 2, 3}, {2, 3, 4, 5}, {6, 7, 8, 9}};
-    	int[][] arr = new int[][] {{1, 2, 7, 13}, {3, 4, 10, 14}, {5, 6, 11, 15}, {8, 9, 12, 16}, {17, 18, 19, 20}};
+    	int[][] arr = new int[][] {{0, 1, 2, 3}, {2, 3, 4, 5}, {6, 0, 7, 8}, {9, 0, 0, 10}, {6, 7, 8, 9}};
+    	//int[][] arr = new int[][] {{1, 2, 7, 13}, {3, 4, 10, 14}, {5, 6, 11, 15}, {8, 9, 12, 16}, {17, 18, 19, 20}};
     	//print(arr);
     	//print(buildSumMatrix(arr));
     	//printMatrixDiagonals(arr);
     	//print(rotateMatrix(arr));
     	//System.out.println(findNumberInMatrix(6, arr));
-    	System.out.println(pow(3,20));
+    	//System.out.println(pow(3, 20));
+    	//print(setRowAndColumnZero(arr));
+    	//System.out.println(getPascalTriangleElement(4,  2));
+    	System.out.println(fact(10));
     }
 
 }

@@ -174,8 +174,7 @@ public class ArrayUtils {
 				for (int j = l; j < r; j++)
 					list.add(a[j]);
 				list2d.add(list);
-				l = r - 1;
-				s = a[l];
+				s -= a[l++];
 			} else if (s > sum) {
 				s -= a[l++];
 			} else {
@@ -491,6 +490,15 @@ public class ArrayUtils {
 		return xor;
 	}
 	
+	static int getDuplicateElement(int[] a) {
+		for (int i = 0; i < a.length; i++)
+		    if (a[Math.abs(a[i])] >= 0)
+		    	a[Math.abs(a[i])] = -a[Math.abs(a[i])];
+		    else
+		    	return Math.abs(a[i]);
+		return -1;
+	}
+	
 	static int[] increaseByOne(int[] a) {
 		if (a == null)
 			return null;
@@ -550,7 +558,7 @@ public class ArrayUtils {
 		//print(difference(new int[] {1, 2, 3, 4, 2, 3}, new int[] {2, 3, 4, 2, 5, 6}));
 		//getSumPairs(new int[] {1,4,2,3,3,4}, 5);
 		//print(findLongestIncreasingSubarray(array));
-		print(getLIS(new int[] {5,6,1,7,2,3,4}));
+		//print(getLIS(new int[] {5,6,1,7,2,3,4}));
 		//int[] res = reverse(array);
 
 		/*List<List<Integer>> res = findIncreasingSubArrays(array);
@@ -563,7 +571,7 @@ public class ArrayUtils {
 		
 		//System.out.print(minChangeNumber(34, DENOMINATIONS));
 		//System.out.print(getUniqueElement(new int[] {4,1,5,2,3,1,4,5,2}));
-		/*List<List<Integer>> list2d = givenSumSubarray(new int[] {1, 3, 5, 2, 1}, 8);
+		/*List<List<Integer>> list2d = getSumSubarray(new int[] {1, 3, 5, 2, 1, 1, 1, 1, 1, 1, 3}, 4);
 		for (List<Integer> list: list2d) {
 			for (Integer v: list)
 				System.out.print(v + " ");
@@ -571,9 +579,9 @@ public class ArrayUtils {
 		}*/
 		//sumSubsets(new int[] {1, 3, 5, 2, 7}, 10);
 		
-		/*int[] arr = minChangeNumber2(20, DENOMINATIONS);
+		int[] arr = minChangeNumber2(20, DENOMINATIONS);
 		for (int i: arr)
-			System.out.print(i + " ");*/
+			System.out.print(i + " ");
 		
 		/*List<List<Integer>> res = getSumSubarray(new int[] {1, 3, 8, 5, 4, 1, 9, 1, 4, 3, 2}, 10);
 		for (List<Integer> l: res) {
@@ -582,7 +590,7 @@ public class ArrayUtils {
 			}
 			System.out.println();
 		}*/
-		
+		//System.out.print(getDuplicateElement(new int[] {1, 2, 3, 1, 4, 5, -6, -1}));
 	}
 
 }
