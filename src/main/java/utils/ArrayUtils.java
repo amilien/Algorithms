@@ -526,7 +526,93 @@ public class ArrayUtils {
 			arr[i] = list.get(i);
 		return arr;
 	}
-	
+
+	private final static int NORTH = 0;
+	private final static int EAST = 1;
+	private final static int SOUTH = 2;
+	private final static int WEST = 3;
+
+	private static class Atom {
+		double x, y;
+		int energy;
+		int dir;
+		boolean isAlive;
+
+		public Atom(double x, double y, int energy, int dir) {
+			this.x = x;
+			this.y = y;
+			this.energy = energy;
+			this.dir = dir;
+			isAlive = true;
+		}
+	}
+
+	static int calculateEnergy(int fieldX, int fieldY, int[] coordX, int[] coordY, int[] dir, int[] energy) {
+		int globalEnergy = 0;
+		double step = 0.5;
+		// fill atoms array
+		List<Atom> atoms = new ArrayList<Atom>();
+		for (int i = 0; i < coordX.length; i++) {
+			Atom atom = new Atom(coordX[i], coordY[i], energy[i], dir[i]);
+			atoms.add(atom);
+		}
+		while (true) {
+			// change coords
+			for (Atom atom: atoms)
+				if (atom.isAlive)
+					switch (atom.dir) {
+						case NORTH:
+							if (atom.y == 0) atom.isAlive = false;
+							else atom.y -= step;
+							break;
+						case EAST:
+							if (atom.x == fieldX - 1) atom.isAlive = false;
+							else atom.x += step;
+							break;
+						case SOUTH:
+							if (atom.y == fieldY - 1) atom.isAlive = false;
+							else atom.y += step;
+							break;
+						case WEST:
+							if (atom.x == 0) atom.isAlive = false;
+							else atom.x -= step;
+							break;
+					}
+			// check hits
+			for (int i = 0; i < atoms.size(); i++) {
+				if (atoms.get(i).isAlive) {
+					int localEnergy = 0;
+					for (int j = i + 1; j < atoms.size(); j++) {
+						if (atoms.get(j).isAlive && atoms.get(i).x == atoms.get(j).x && atoms.get(i).y == atoms.get(j).y) {
+							localEnergy += isHalfMove(atoms.get(j).x, atoms.get(j).y) ? atoms.get(j).energy / 2 : atoms.get(j).energy;
+							System.out.println("Hit! " + atoms.get(i).energy + " and " + atoms.get(j).energy + " " + (isHalfMove(atoms.get(j).x, atoms.get(j).y) ? " (half) " : "(full) ") + localEnergy);
+							atoms.get(j).isAlive = false;
+						}
+					}
+					if (localEnergy > 0) {
+						globalEnergy += localEnergy + (isHalfMove(atoms.get(i).x, atoms.get(i).y) ? atoms.get(i).energy / 2 : atoms.get(i).energy);
+						atoms.get(i).isAlive = false;
+					}
+				}
+			}
+			// check alive atoms
+			int count = 0;
+			for (Atom atom: atoms)
+				if (!atom.isAlive)
+					count++;
+			if (count == atoms.size())
+				break;
+		}
+		return globalEnergy;
+	}
+
+	private static boolean isHalfMove(double x, double y) {
+		if (x - Math.floor(x) == 0 && y - Math.floor(y) == 0)
+			return false;
+		else
+			return true;
+	}
+
 	static void print(int[] a) {
 		for (int i = 0; i < a.length; i++)
 			System.out.print(a[i]+ " ");
@@ -579,7 +665,7 @@ public class ArrayUtils {
 		}*/
 		//sumSubsets(new int[] {1, 3, 5, 2, 7}, 10);
 		
-		int[] arr = minChangeNumber2(20, DENOMINATIONS);
+		/*int[] arr = minChangeNumber2(20, DENOMINATIONS);
 		for (int i: arr)
 			System.out.print(i + " ");
 		
@@ -591,6 +677,11 @@ public class ArrayUtils {
 			System.out.println();
 		}*/
 		//System.out.print(getDuplicateElement(new int[] {1, 2, 3, 1, 4, 5, -6, -1}));
+		int[] coordX = {1,2,1,0,3,3,0,4,1,5,5,5};
+		int[] coordY = {1,2,3,2,2,6,5,5,2,6,2,3};
+		int[] dir = {SOUTH,WEST,NORTH,EAST,SOUTH,NORTH,EAST,WEST,EAST,NORTH,SOUTH,NORTH};
+		int[] energy = {0,1,2,3,4,5,6,7,8,9,10,12};
+		System.out.print(calculateEnergy(6, 7, coordX, coordY, dir, energy));
 	}
 
 }

@@ -23,7 +23,7 @@ import java.math.BigInteger;
  *
  */
 
-public class Arithmetic {
+public class ArithmeticUtils {
 
 	// O(log y)
     static int multiply(int x, int y) {
