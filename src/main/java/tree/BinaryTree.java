@@ -10,12 +10,18 @@ public class BinaryTree {
         Node left;
         Node right;
         int value;
-        
+
         Node(int v) {
             left = right = null;
             value = v;
         }
-        
+
+        Node(int v, Node l, Node r) {
+            value = v;
+            left = l;
+            right = r;
+        }
+
         @Override
         public int hashCode() {
         	final int prime = 17;
@@ -139,7 +145,16 @@ public class BinaryTree {
     	}
     	return depth;
     }
-    
+
+    static Node copy(Node root) {
+        Node left = null, right = null;
+        if (root.left != null)
+            left = copy(root.left);
+        if (root.right != null)
+            right = copy(root.right);
+        return new Node(root.value, left, right);
+    }
+
     static Node lca(Node root, Node node1, Node node2) {
     	Node cur = node1;
     	LinkedList<Node> list1 = new LinkedList<Node>();
